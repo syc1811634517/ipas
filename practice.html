@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iPAS AI 應用規劃師證照練習（舊版）</title>
+<style>
+  body {
+    font-family: 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif;
+    line-height: 1.6;
+    margin: 20px;
+    background-color: #f4f4f4;
+  }
+  h1, h2 {
+    color: #0056b3;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+  }
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #007bff;
+  }
+  .header-container h1 {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 10px;
+  }
+  .new-version-btn {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 14px;
+    transition: background-color 0.3s;
+    margin-bottom: 10px; /* Align with h1 padding */
+  }
+  .new-version-btn:hover {
+    background-color: #0056b3;
+  }
+  .container {
+    max-width: 900px;
+    margin: auto;
+    background: #fff;
+    padding: 20px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .question-block {
+    margin-bottom: 25px;
+    border-left: 4px solid #ddd;
+    padding-left: 15px;
+  }
+  .question-text {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .options label {
+    display: block;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+  .options label:hover {
+    background-color: #f0f8ff;
+  }
+  input[type="radio"] {
+    margin-right: 10px;
+  }
+  button {
+    display: block;
+    margin: 40px auto 20px;
+    background: #28a745;
+    color: #fff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    transition: background-color 0.3s;
+  }
+  button:hover {
+    background: #218838;
+  }
+  button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+  }
+  #results {
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  #results.pass {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+  }
+  #results.fail {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+  }
+  .result-details {
+      text-align: left;
+      margin-top: 15px;
+  }
+
+  /* --- Styles for showing answers --- */
+  .correct-answer-label {
+    background-color: #d4edda; /* Light green */
+    border: 1px solid #c3e6cb;
+    font-weight: bold;
+  }
+  .incorrect-answer-label {
+    background-color: #f8d7da; /* Light red */
+    border: 1px solid #f5c6cb;
+    text-decoration: line-through;
+  }
+  .correct-answer-text {
+    margin-top: 10px;
+    padding: 8px;
+    background-color: #e9ecef;
+    border-radius: 5px;
+    font-weight: bold;
+    color: #155724; /* Dark green */
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header-container">
+    <h1>iPAS AI 應用規劃師證照練習（舊版）</h1>
+    <a href="https://ipasnew.ptcnet.org" class="new-version-btn" target="_blank">前往新版</a>
+  </div>
+  <p><strong>說明：</strong>本科目測驗共100題，一題2分，總分200分，取平均100分。合格標準為<strong>平均70分</strong>，但單科成績不得低於<strong>60分</strong>。</p>
+  <h3>重新整理網頁後答案會不見，請各位留意。</h3>
+  <p> - 如需儲存作答結果，可在提交後按下 Ctrl+S 儲存網頁，以利複習。</p>
+  <h3>交卷按鈕在頁面最下方，正確答案需交卷後才能看到。</h3>
+  <form id="quizForm">
+    <h2>第一部分：人工智慧基礎概論 (50題)</h2>
+    <div id="ai-fundamentals"></div>
+    
+    <h2>第二部分：生成式AI應用與規劃 (50題)</h2>
+    <div id="gen-ai"></div>
+    
+    <button type="button" onclick="submitQuiz()">提交答案並查看結果</button>
+  </form>
+  
+  <div id="results"></div>
+</div>
+
+<script>
+const questions = [
+  // AI Fundamentals Questions
+  {
+    subject: "ai-fundamentals",
+    question: "1. 被譽為「人工智慧之父」的電腦科學家是誰？",
+    options: ["艾倫·圖靈 (Alan Turing)", "約翰·麥卡錫 (John McCarthy)", "傑弗里·辛頓 (Geoffrey Hinton)", "楊立昆 (Yann LeCun)"],
+    answer: "艾倫·圖靈 (Alan Turing)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "2. 在機器學習中，將資料標記為特定類別，例如將郵件分為「垃圾郵件」和「非垃圾郵件」，這屬於哪種類型的學習？",
+    options: ["監督式學習 (Supervised Learning)", "非監督式學習 (Unsupervised Learning)", "強化學習 (Reinforcement Learning)", "半監督式學習 (Semi-supervised Learning)"],
+    answer: "監督式學習 (Supervised Learning)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "3. 哪種演算法常用於處理非監督式學習中的分群 (Clustering) 問題？",
+    options: ["線性迴歸 (Linear Regression)", "決策樹 (Decision Tree)", "K-均值演算法 (K-Means)", "支持向量機 (SVM)"],
+    answer: "K-均值演算法 (K-Means)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "4. 下列何者是深度學習 (Deep Learning) 的一個關鍵特徵？",
+    options: ["使用單層神經網路", "依賴人工特徵工程", "模型包含多個隱藏層", "僅適用於數值資料"],
+    answer: "模型包含多個隱藏層"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "5. 在評估分類模型效能時，『真正率』(True Positive Rate) 指的是什麼？",
+    options: ["精確率 (Precision)", "召回率 (Recall)", "F1 分數 (F1-Score)", "準確率 (Accuracy)"],
+    answer: "召回率 (Recall)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "6. 在AI的發展歷史中，在哪個會議上首次提出了「人工智慧」這個術語？",
+    options: ["達特茅斯會議 (Dartmouth Conference)", "索爾維會議 (Solvay Conference)", "布雷頓森林會議 (Bretton Woods Conference)", "日內瓦會議 (Geneva Conference)"],
+    answer: "達特茅斯會議 (Dartmouth Conference)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "7. 在訓練機器學習模型時，如果模型在訓練集上表現很好，但在測試集上表現很差，這種現象稱為什麼？",
+    options: ["欠擬合 (Underfitting)", "過擬合 (Overfitting)", "偏差 (Bias)", "變異 (Variance)"],
+    answer: "過擬合 (Overfitting)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "8. 卷積神經網路 (CNN) 特別適用於處理哪種類型的資料？",
+    options: ["時間序列資料", "表格資料", "圖像資料", "文字資料"],
+    answer: "圖像資料"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "9. AlphaGo 使用了哪種學習方式來擊敗世界頂尖的圍棋棋手？",
+    options: ["僅監督式學習", "僅非監督式學習", "監督式學習與強化學習的結合", "僅遺傳演算法"],
+    answer: "監督式學習與強化學習的結合"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "10. 自然語言處理 (NLP) 的主要目標是讓電腦能夠做什麼？",
+    options: ["理解和生成人類語言", "識別圖像中的物件", "優化供應鏈", "預測股票市場"],
+    answer: "理解和生成人類語言"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "11. 神經網路中的「激勵函數」(Activation Function) 的主要作用是什麼？",
+    options: ["標準化輸入資料", "引入非線性特性", "計算損失", "更新權重"],
+    answer: "引入非線性特性"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "12. 在處理資料時，將資料集分為訓練集、驗證集和測試集的主要目的是什麼？",
+    options: ["加速訓練過程", "減少記憶體使用", "評估模型的泛化能力並防止過擬合", "增加資料的多樣性"],
+    answer: "評估模型的泛化能力並防止過擬合"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "13. 下列哪一項不是典型的資料預處理步驟？",
+    options: ["處理遺失值", "特徵縮放 (Feature Scaling)", "模型訓練", "類別資料編碼 (Categorical Encoding)"],
+    answer: "模型訓練"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "14. 所謂的「弱AI」(Weak AI) 或「窄AI」(Narrow AI) 是指？",
+    options: ["能夠模擬人類所有智慧行為的AI", "專注於執行特定任務的AI", "具有自我意識的AI", "處理速度較慢的AI"],
+    answer: "專注於執行特定任務的AI"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "15. 用於評估迴歸模型 (Regression Model) 性能的常用指標是？",
+    options: ["混淆矩陣 (Confusion Matrix)", "均方誤差 (Mean Squared Error, MSE)", "F1 分數 (F1-Score)", "ROC 曲線下面積 (AUC)"],
+    answer: "均方誤差 (Mean Squared Error, MSE)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "16. 循環神經網路 (RNN) 特別適用於處理哪種類型的問題？",
+    options: ["影像分類", "物件偵測", "序列資料預測，如語音或文本", "資料分群"],
+    answer: "序列資料預測，如語音或文本"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "17. AI倫理中提到的「可解釋性AI」(Explainable AI, XAI) 主要關注什麼問題？",
+    options: ["提升AI模型的運算速度", "使AI模型的決策過程透明化且可被人類理解", "增加AI模型的準確度", "確保AI模型能夠處理所有類型的資料"],
+    answer: "使AI模型的決策過程透明化且可被人類理解"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "18. 在決策樹演算法中，「熵」(Entropy) 或「吉尼不純度」(Gini Impurity) 是用來衡量什麼？",
+    options: ["資料集的計算複雜度", "資料集的純度或混亂程度", "演算法的執行時間", "特徵的重要性"],
+    answer: "資料集的純度或混亂程度"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "19. 將高維度資料轉換為低維度資料，同時保留重要資訊的技術稱為？",
+    options: ["降維 (Dimensionality Reduction)", "特徵工程 (Feature Engineering)", "正規化 (Regularization)", "分類 (Classification)"],
+    answer: "降維 (Dimensionality Reduction)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "20. Python 中常用於機器學習的函式庫是？",
+    options: ["NumPy", "Pandas", "Scikit-learn", "以上皆是"],
+    answer: "以上皆是"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "21. AI 領域中的「知識表示」(Knowledge Representation) 主要研究如何？",
+    options: ["有效地儲存和組織資訊，以便AI系統進行推理", "將資料視覺化", "建立更快的硬體", "撰寫更有效率的程式碼"],
+    answer: "有效地儲存和組織資訊，以便AI系統進行推理"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "22. 以下何者屬於生物特徵辨識技術？",
+    options: ["密碼驗證", "指紋辨識", "門禁卡", "QR code 掃描"],
+    answer: "指紋辨識"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "23. 推薦系統(Recommender Systems)常常利用哪種技術來預測使用者可能喜歡的項目?",
+    options: ["協同過濾 (Collaborative Filtering)", "線性迴歸 (Linear Regression)", "圖像分割 (Image Segmentation)", "隨機森林 (Random Forest)"],
+    answer: "協同過濾 (Collaborative Filtering)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "24. 當AI模型對某些群體的預測結果存在系統性偏差時，稱之為？",
+    options: ["演算法效率問題", "資料隱私問題", "演算法偏見 (Algorithmic Bias)", "模型過擬合"],
+    answer: "演算法偏見 (Algorithmic Bias)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "25. 梯度下降法 (Gradient Descent) 在神經網路訓練中的主要目的是什麼？",
+    options: ["初始化網路權重", "最小化損失函數 (Loss Function)", "選擇激勵函數", "進行資料預處理"],
+    answer: "最小化損失函數 (Loss Function)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "26. 長短期記憶網路 (LSTM) 是為了解決普通 RNN 的什麼問題而設計的？",
+    options: ["計算速度慢", "梯度消失/爆炸問題", "只能處理文字資料", "模型太大"],
+    answer: "梯度消失/爆炸問題"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "27. 以下哪項技術最適合用於從大量非結構化文本中提取主題？",
+    options: ["主題模型 (Topic Modeling)，例如 LDA", "K-近鄰演算法 (K-NN)", "主成分分析 (PCA)", "線性判別分析 (LDA)"],
+    answer: "主題模型 (Topic Modeling)，例如 LDA"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "28. 在電腦視覺中，同時識別圖像中物體的位置和類別的任務稱為？",
+    options: ["影像分類 (Image Classification)", "影像分割 (Image Segmentation)", "物件偵測 (Object Detection)", "風格轉換 (Style Transfer)"],
+    answer: "物件偵測 (Object Detection)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "29. 何謂「遷移學習」(Transfer Learning)？",
+    options: ["將多個模型結合成一個更強大的模型", "將在一個任務上預訓練好的模型，應用到另一個相關的任務上", "在訓練過程中逐漸增加資料量", "一種非監督式學習方法"],
+    answer: "將在一個任務上預訓練好的模型，應用到另一個相關的任務上"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "30. 在監督式學習中，如果目標變數是連續的數值（如房價、溫度），則該問題屬於？",
+    options: ["分類 (Classification) 問題", "迴歸 (Regression) 問題", "分群 (Clustering) 問題", "降維 (Dimensionality Reduction) 問題"],
+    answer: "迴歸 (Regression) 問題"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "31. 在 AI 開發流程中，MLOps (Machine Learning Operations) 主要關注什麼？",
+    options: ["演算法的數學理論研究", "自動化和標準化機器學習模型的生命週期管理", "前端使用者介面設計", "硬體設備的採購"],
+    answer: "自動化和標準化機器學習模型的生命週期管理"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "32. 所謂的「資料擴增」(Data Augmentation) 技術常用於解決什麼問題？",
+    options: ["資料量不足或樣本不均衡", "模型計算速度過慢", "資料維度過高", "特徵之間存在共線性"],
+    answer: "資料量不足或樣本不均衡"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "33. 以下何者是評估模型穩健性(Robustness)的方法？",
+    options: ["使用更多的訓練資料", "對輸入資料加入微小的擾動或噪聲，觀察模型表現", "使用更複雜的模型架構", "簡化資料預處理流程"],
+    answer: "對輸入資料加入微小的擾動或噪聲，觀察模型表現"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "34. 神經網路中的「權重」(Weights) 代表什麼？",
+    options: ["每個神經元的輸出值", "神經元之間連接的強度", "學習率的大小", "輸入特徵的數量"],
+    answer: "神經元之間連接的強度"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "35. 模糊邏輯 (Fuzzy Logic) 與傳統布林邏輯 (Boolean Logic) 的主要區別是什麼？",
+    options: ["處理速度更快", "允許命題的真值介於 0 和 1 之間，而非絕對的真或假", "只能處理數字資料", "只能用於硬體設計"],
+    answer: "允許命題的真值介於 0 和 1 之間，而非絕對的真或假"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "36. 強化學習的三個核心要素是？",
+    options: ["資料、模型、演算法", "代理人 (Agent)、環境 (Environment)、獎勵 (Reward)", "輸入層、隱藏層、輸出層", "監督、非監督、半監督"],
+    answer: "代理人 (Agent)、環境 (Environment)、獎勵 (Reward)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "37. 以下何者是「專家系統」(Expert System) 的典型組成部分？",
+    options: ["資料庫與使用者介面", "知識庫 (Knowledge Base) 與推理引擎 (Inference Engine)", "卷積層與池化層", "生成器與判別器"],
+    answer: "知識庫 (Knowledge Base) 與推理引擎 (Inference Engine)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "38. 當模型無法很好地擬合訓練資料，導致在訓練集上就有很高的錯誤率，這被稱為什麼？",
+    options: ["過擬合 (Overfitting)", "欠擬合 (Underfitting)", "高變異 (High Variance)", "資料洩漏 (Data Leakage)"],
+    answer: "欠擬合 (Underfitting)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "39. 聯邦學習 (Federated Learning) 的主要優勢在於？",
+    options: ["訓練速度極快", "模型準確率最高", "能夠在不分享原始資料的情況下進行模型訓練，保護資料隱私", "不需要大量計算資源"],
+    answer: "能夠在不分享原始資料的情況下進行模型訓練，保護資料隱私"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "40. 支持向量機 (SVM) 的主要目標是？",
+    options: ["找到一個能最好地將不同類別分開的超平面 (Hyperplane)", "將資料點分到 K 個群集中", "預測一個連續的數值", "根據機率生成新的資料"],
+    answer: "找到一個能最好地將不同類別分開的超平面 (Hyperplane)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "41. 下列哪一個不是衡量模型複雜度的指標？",
+    options: ["模型參數的數量", "決策樹的深度", "神經網路的層數", "訓練資料的筆數"],
+    answer: "訓練資料的筆數"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "42. 處理類別不平衡問題(Imbalanced classification problem)時，下列哪一種評估指標可能具有誤導性？",
+    options: ["精確率 (Precision)", "召回率 (Recall)", "準確率 (Accuracy)", "F1 分數 (F1-Score)"],
+    answer: "準確率 (Accuracy)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "43. 將文字轉換為數值向量，以供機器學習模型使用的過程稱為？",
+    options: ["文字分詞 (Tokenization)", "詞性標註 (POS Tagging)", "詞嵌入 (Word Embedding)", "語法分析 (Parsing)"],
+    answer: "詞嵌入 (Word Embedding)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "44. 在強化學習中，『策略』(Policy) 的定義是什麼？",
+    options: ["環境給予獎勵的規則", "代理人(Agent)在特定狀態下選擇動作的依據", "模型所有參數的集合", "完成任務所需的總步數"],
+    answer: "代理人(Agent)在特定狀態下選擇動作的依據"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "45. Auto-ML (自動化機器學習) 的主要目標是？",
+    options: ["設計新的神經網路架構", "自動化模型選擇、超參數調整等機器學習流程", "開發新的資料庫系統", "編寫程式碼的工具"],
+    answer: "自動化模型選擇、超參數調整等機器學習流程"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "46. 什麼是圖靈測試 (Turing Test) 的目的？",
+    options: ["測試電腦的計算速度", "測試機器是否能展現出與人類無法區分的智慧行為", "測試演算法的複雜度", "測試AI的記憶容量"],
+    answer: "測試機器是否能展現出與人類無法區分的智慧行為"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "47. L1 正規化 (Lasso) 和 L2 正規化 (Ridge) 的主要區別是什麼？",
+    options: ["L1 傾向於產生稀疏權重 (使某些權重變為零)，而 L2 不會", "L2 比 L1 計算速度更快", "L1 只能用於線性迴歸", "L2 專門用於解決分類問題"],
+    answer: "L1 傾向於產生稀疏權重 (使某些權重變為零)，而 L2 不會"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "48. 決策樹演算法容易產生什麼問題，而隨機森林 (Random Forest) 可以有效緩解？",
+    options: ["欠擬合 (Underfitting)", "過擬合 (Overfitting)", "計算成本過高", "無法處理類別資料"],
+    answer: "過擬合 (Overfitting)"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "49. 在 AI 應用中，IoT (物聯網) 裝置扮演的主要角色是什麼？",
+    options: ["提供運算能力", "作為資料來源，收集現實世界的數據", "設計使用者介面", "儲存訓練好的模型"],
+    answer: "作為資料來源，收集現實世界的數據"
+  },
+  {
+    subject: "ai-fundamentals",
+    question: "50. 『人工智慧』、『機器學習』與『深度學習』三者之間的關係是？",
+    options: ["三者是完全獨立的領域", "人工智慧是機器學習的子集，機器學習是深度學習的子集", "深度學習是機器學習的子集，機器學習是人工智慧的子集", "三者是同義詞"],
+    answer: "深度學習是機器學習的子集，機器學習是人工智慧的子集"
+  },
+  
+  // ---- START OF REPLACED QUESTIONS ----
+  {
+    subject: "gen-ai",
+    question: "51. 下列何者最能精確描述生成式AI (Generative AI) 的核心特徵？",
+    options: [
+        "學習現有資料的模式，並依此進行精準的分類或預測。",
+        "根據學習到的數據分佈與模式，創造出全新的、原創的內容。",
+        "從龐大的資料庫中，快速檢索並呈現最相關的資訊。",
+        "分析資料中的關聯性，以優化決策流程。"
+    ],
+    answer: "根據學習到的數據分佈與模式，創造出全新的、原創的內容。"
+  },
+  {
+    subject: "gen-ai",
+    question: "52. 在生成對抗網路 (GAN) 的架構中，「生成器」(Generator) 的主要任務是什麼？",
+    options: [
+        "盡其所能地區分輸入的資料是來自真實數據集還是由自己生成的。",
+        "捕捉真實數據的潛在分佈，並依此生成足以以假亂真的新數據。",
+        "評估生成數據的品質，並提供一個量化的分數來指導網路的學習。",
+        "根據判別器的反饋，更新整個網路的權重以降低損失。"
+    ],
+    answer: "捕捉真實數據的潛在分佈，並依此生成足以以假亂真的新數據。"
+  },
+  {
+    subject: "gen-ai",
+    question: "53. 當前絕大多數大型語言模型 (LLM)，如 GPT-4 和 Llama 3，其核心的神經網路架構是什麼？",
+    options: [
+        "卷積神經網路 (CNN)，擅長捕捉圖像等空間層次結構的特徵。",
+        "循環神經網路 (RNN)，為處理序列資料而設計，但有長期依賴問題。",
+        "轉換器 (Transformer)，利用自注意力機制有效處理長序列的上下文關係。",
+        "圖神經網路 (GNN)，專門用於理解節點和邊所構成的圖結構資料。"
+    ],
+    answer: "轉換器 (Transformer)，利用自注意力機制有效處理長序列的上下文關係。"
+  },
+  {
+    subject: "gen-ai",
+    question: "54. 在與生成式 AI 互動時，「提示工程」(Prompt Engineering) 的精確定義為何？",
+    options: [
+        "調整模型的超參數（如學習率、批次大小）來優化訓練效果。",
+        "設計與建構模型的輸入指令，以引導模型產生期望的高品質輸出。",
+        "撰寫用於微調 (Fine-tuning) 模型的特定領域腳本與程式碼。",
+        "開發能夠讓使用者與 AI 模型順暢互動的前端應用介面。"
+    ],
+    answer: "設計與建構模型的輸入指令，以引導模型產生期望的高品質輸出。"
+  },
+  {
+    subject: "gen-ai",
+    question: "55. 在提示工程中，「Zero-shot Prompting」的意涵是什麼？",
+    options: [
+        "給予模型一或兩個範例，引導它理解任務要求後再執行。",
+        "在沒有提供任何具體範例的情況下，直接對模型下達指令要求執行任務。",
+        "引導模型進行一步步的邏輯推理，並展現其思考過程。",
+        "利用包含大量標註範例的資料集來對模型進行微調。"
+    ],
+    answer: "在沒有提供任何具體範例的情況下，直接對模型下達指令要求執行任務。"
+  },
+  {
+    subject: "gen-ai",
+    question: "56. Midjourney、Stable Diffusion 和 DALL-E 3 是在哪個領域取得突破性進展的生成式 AI 模型？",
+    options: [
+        "根據文字描述生成程式碼片段。",
+        "根據文字描述生成擬真或特定風格的影像。",
+        "根據文字描述生成不同曲風的音樂。",
+        "根據文字描述生成摘要或擴寫文章。"
+    ],
+    answer: "根據文字描述生成擬真或特定風格的影像。"
+  },
+  {
+    subject: "gen-ai",
+    question: "57. 當生成式 AI 模型產生了聽起來非常流暢、看似有理，但事實上完全錯誤或憑空捏造的資訊，此現象稱為什麼？",
+    options: [
+        "過擬合 (Overfitting)，指模型過度學習訓練資料的細節，導致泛化能力下降。",
+        "幻覺 (Hallucination)，指模型產生了與現實世界事實不符的虛構內容。",
+        "偏見 (Bias)，指模型因訓練資料的不平衡而產生了系統性的不公平輸出。",
+        "災難性遺忘 (Catastrophic Forgetting)，指模型在學習新知識後，忘記了先前學會的知識。"
+    ],
+    answer: "幻覺 (Hallucination)，指模型產生了與現實世界事實不符的虛構內容。"
+  },
+  {
+    subject: "gen-ai",
+    question: "58. 企業在規劃導入生成式 AI 應用時，以下哪一項是需優先考慮的倫理與合規性議題？",
+    options: [
+        "模型生成結果是否符合企業的品牌形象與價值觀。",
+        "訓練資料的來源是否侵犯版權，以及使用者資料的隱私是否受到保護。",
+        "模型的推論延遲是否能滿足使用者的即時性需求。",
+        "選擇的雲端服務供應商是否提供足夠的計算資源。"
+    ],
+    answer: "訓練資料的來源是否侵犯版權，以及使用者資料的隱私是否受到保護。"
+  },
+  {
+    subject: "gen-ai",
+    question: "59. Transformer 架構之所以能夠在自然語言處理上取得巨大成功，最關鍵的核心機制是什麼？",
+    options: [
+        "卷積運算 (Convolution)，能有效提取局部特徵。",
+        "梯度下降 (Gradient Descent)，是優化模型參數的基本演算法。",
+        "自注意力機制 (Self-Attention Mechanism)，能計算序列中各元素間的相互重要性。",
+        "正規化 (Regularization)，用於防止模型過擬合的技術。"
+    ],
+    answer: "自注意力機制 (Self-Attention Mechanism)，能計算序列中各元素間的相互重要性。"
+  },
+  {
+    subject: "gen-ai",
+    question: "60. 檢索增強生成 (RAG) 技術的出現，主要是為了解決大型語言模型 (LLM) 的哪一項核心限制？",
+    options: [
+        "模型參數過於龐大，導致部署和維護成本高昂。",
+        "因為知識停留在訓練截止日之後，無法獲取最新資訊且容易產生幻覺。",
+        "對於較為稀有的語言或方言，理解與生成的能力不足。",
+        "在生成長篇文本時，容易出現邏輯不連貫或重複的問題。"
+    ],
+    answer: "因為知識停留在訓練截止日之後，無法獲取最新資訊且容易產生幻覺。"
+  },
+  {
+    subject: "gen-ai",
+    question: "61. 生成式 AI 已被廣泛應用於多種企業場景，但下列何者不是其典型的應用範疇？",
+    options: [
+        "根據產品規格，自動生成多種版本的行銷文案。",
+        "依據使用者需求，生成程式碼原型或除錯建議。",
+        "扮演智慧客服，即時回答客戶的常見問題。",
+        "即時監控網路流量，並自動阻擋惡意攻擊封包。"
+    ],
+    answer: "即時監控網路流量，並自動阻擋惡意攻擊封包。"
+  },
+  {
+    subject: "gen-ai",
+    question: "62. 為了讓一個通用的預訓練大型語言模型能更好地理解特定領域（如法律、醫療）的專業知識，需要進行的過程稱為什麼？",
+    options: [
+        "預訓練 (Pre-training)，指在海量通用資料上進行模型的初始訓練。",
+        "微調 (Fine-tuning)，指使用特定領域的資料集對預訓練模型進行進一步的訓練。",
+        "量化 (Quantization)，指降低模型權重的數值精度以減小模型大小。",
+        "蒸餾 (Distillation)，指將大型模型的知識轉移到一個更小的模型中。"
+    ],
+    answer: "微調 (Fine-tuning)，指使用特定領域的資料集對預訓練模型進行進一步的訓練。"
+  },
+  {
+    subject: "gen-ai",
+    question: "63. 變分自動編碼器 (VAE) 作為一種生成模型，其主要應用是？",
+    options: [
+        "預測一個連續的數值，例如明天的氣溫或股價。",
+        "將輸入的資料對應到數個預先定義好的類別之一。",
+        "學習資料的潛在表徵，並生成與原始資料相似但非完全相同的新樣本。",
+        "根據歷史行為數據，為使用者推薦可能感興趣的項目。"
+    ],
+    answer: "學習資料的潛在表徵，並生成與原始資料相似但非完全相同的新樣本。"
+  },
+  {
+    subject: "gen-ai",
+    question: "64. 規劃生成式 AI 專案時，需要建立明確的關鍵績效指標（KPIs）。以下何者是**不適合**直接作為衡量專案成功的 KPI？",
+    options: [
+        "專案導入後，相關任務的人力成本降低百分比。",
+        "使用者對 AI 生成內容的滿意度評分。",
+        "所使用的大型語言模型的參數數量多寡。",
+        "AI 自動化處理的業務案件數量。"
+    ],
+    answer: "所使用的大型語言模型的參數數量多寡。"
+  },
+  {
+    subject: "gen-ai",
+    question: "65. 在現代 IT 維運領域中，「AIOps」這個術語指的是什麼？",
+    options: [
+        "一套指導如何操作與管理人們智慧系統的標準作業流程。",
+        "利用人工智慧技術（特別是機器學習）來自動化和簡化 IT 營運管理。",
+        "專門為執行 AI 運算而設計的優化硬體架構。",
+        "圍繞 AI 開發與應用所制定的相關法律與道德規範。"
+    ],
+    answer: "利用人工智慧技術（特別是機器學習）來自動化和簡化 IT 營運管理。"
+  },
+  {
+    subject: "gen-ai",
+    question: "66. 判別式 AI (Discriminative AI) 與生成式 AI (Generative AI) 的根本區別在於？",
+    options: [
+        "判別式 AI 學習資料的決策邊界 (P(y|x))，而生成式 AI 學習資料的真實分佈 (P(x,y))。",
+        "判別式 AI 需要標註資料，而生成式 AI 完全不需要標註資料。",
+        "判別式 AI 通常比生成式 AI 需要更多的運算資源。",
+        "判別式 AI 用於分類，而生成式 AI 專門用於回歸預測。"
+    ],
+    answer: "判別式 AI 學習資料的決策邊界 (P(y|x))，而生成式 AI 學習資料的真實分佈 (P(x,y))。"
+  },
+  {
+    subject: "gen-ai",
+    question: "67. 在提示工程中，「Chain-of-Thought (CoT)」提示技巧的核心目的是什麼？",
+    options: [
+        "透過提供多個範例，讓模型學習舉一反三的能力。",
+        "強制模型在生成內容時使用更加多樣化和富於創意的詞彙。",
+        "誘導模型將複雜問題分解為多個步驟，並展示其推理過程以提高準確率。",
+        "告訴模型扮演一個特定角色，使其回答更符合該角色的語氣和專業知識。"
+    ],
+    answer: "誘導模型將複雜問題分解為多個步驟，並展示其推理過程以提高準確率。"
+  },
+  {
+    subject: "gen-ai",
+    question: "68. 諸如 Stable Diffusion 等影像生成模型所依賴的擴散模型 (Diffusion Models)，其基本生成原理是什麼？",
+    options: [
+        "透過生成器與判別器的互相博弈，逐步優化生成結果的品質。",
+        "將真實影像逐步加入噪聲直至變為純噪聲，再學習逆向過程從噪聲還原出影像。",
+        "將高維度的影像資料壓縮到一個低維度的潛在空間，再從中採樣解碼生成新影像。",
+        "依賴大規模的知識圖譜，將文字概念與視覺元素進行關聯匹配來生成影像。"
+    ],
+    answer: "將真實影像逐步加入噪聲直至變為純噪聲，再學習逆向過程從噪聲還原出影像。"
+  },
+  {
+    subject: "gen-ai",
+    question: "69. 在企業流程中導入生成式 AI 時，為何建立「人機協作」(Human-in-the-loop) 的審核機制至關重要？",
+    options: [
+        "為了隨時監控 AI 的運算效率與資源消耗。",
+        "為了確保 AI 生成的內容在發布前經過人類專家的審核、修正，以保證品質、準確性與合規性。",
+        "因為目前的 AI 技術尚不穩定，需要人類隨時準備接管所有任務。",
+        "作為一種過渡階段的安排，目標是逐步收集資料以最終完全取代人類。"
+    ],
+    answer: "為了確保 AI 生成的內容在發布前經過人類專家的審核、修正，以保證品質、準確性與合規性。"
+  },
+  {
+    subject: "gen-ai",
+    question: "70. 大型語言模型所展現的「湧現能力」(Emergent Abilities) 是指什麼？",
+    options: [
+        "隨著訓練資料的增加，模型性能呈現可預期的線性增長。",
+        "模型在經過微調後，在特定任務上所獲得的專業能力。",
+        "當模型規模（如參數數量）突破某个閾值後，突然表現出的、未被直接訓練的新能力。",
+        "透過優化提示詞，從模型中引導出的隱藏能力。"
+    ],
+    answer: "當模型規模（如參數數量）突破某个閾值後，突然表現出的、未被直接訓練的新能力。"
+  },
+  {
+    subject: "gen-ai",
+    question: "71. 企業若要使用自身的商業數據來微調一個大型語言模型，在數據準備階段最關鍵的考量是什麼？",
+    options: [
+        "選擇效能最強大的 GPU 伺服器來縮短訓練時間。",
+        "確保用於微調的數據集具備高品質、高相關性，並已妥善處理潛在的偏見。",
+        "決定要使用哪一種程式框架（例如 PyTorch 或 TensorFlow）來進行開發。",
+        "確保數據量足夠大，至少要達到與預訓練同一個數量級。"
+    ],
+    answer: "確保用於微調的數據集具備高品質、高相關性，並已妥善處理潛在的偏見。"
+  },
+  {
+    subject: "gen-ai",
+    question: "72. 對於生成式 AI 系統進行「紅隊演練」(Red Teaming)，其主要目的是什麼？",
+    options: [
+        "評估模型在處理大規模請求時的穩定性與反應速度。",
+        "作為一種行銷手段，向潛在客戶展示模型的強大能力。",
+        "模擬惡意使用者，主動透過各種攻擊性提示來找出模型的漏洞、偏見與可能被濫用的方式。",
+        "將模型的輸出結果與一組標準答案進行比對，以計算其準確率。"
+    ],
+    answer: "模擬惡意使用者，主動透過各種攻擊性提示來找出模型的漏洞、偏見與可能被濫用的方式。"
+  },
+  {
+    subject: "gen-ai",
+    question: "73. 下列哪一項**不是**大型語言模型（LLM）目前普遍面臨的風險與挑戰？",
+    options: [
+        "其訓練與運作過程需要消耗大量的電力能源。",
+        "產出的內容可能繼承或放大訓練資料中的社會偏見。",
+        "能夠可靠地處理超過其上下文窗口長度的資訊。",
+        "生成內容的版權歸屬與智慧財產權問題。"
+    ],
+    answer: "能夠可靠地處理超過其上下文窗口長度的資訊。"
+  },
+  {
+    subject: "gen-ai",
+    question: "74. 在生成式 AI 的脈絡下，一個「多模態」(Multimodal) 模型指的是什麼？",
+    options: [
+        "一個能夠理解並生成多種不同人類語言（如英文、中文、法文）的模型。",
+        "一個能夠同時理解並處理多種類型資料（如文字、影像、聲音）的模型。",
+        "一個由多個小型專家模型組合而成的大型模型系統。",
+        "一個可以部署在多種不同硬體設備（如雲端、邊緣裝置）上的模型。"
+    ],
+    answer: "一個能夠同時理解並處理多種類型資料（如文字、影像、聲音）的模型。"
+  },
+  {
+    subject: "gen-ai",
+    question: "75. BERT (Bidirectional Encoder Representations from Transformers) 模型對自然語言理解領域的一大貢獻是？",
+    options: [
+        "首次證明了 Transformer 架構在處理語言任務上的潛力。",
+        "透過真正的雙向上下文理解，讓模型能更精準地掌握詞義。",
+        "作為一個生成模型，能夠撰寫出高品質的文章和詩歌。",
+        "提出了一種極為高效的訓練方法，大幅降低了模型訓練成本。"
+    ],
+    answer: "透過真正的雙向上下文理解，讓模型能更精準地掌握詞義。"
+  },
+  {
+    subject: "gen-ai",
+    question: "76. 企業在選擇串接第三方大型語言模型的 API 服務時，從技術與營運角度出發，最重要的考量是什麼？",
+    options: [
+        "該 API 服務的供應商是否為知名的大型科技公司。",
+        "API 的文件是否清晰易懂，並提供多種程式語言的範例。",
+        "API 的服務等級協議 (SLA) 是否保障了足夠的請求頻率、穩定性、低延遲與資料安全。",
+        "該 API 是否提供免費試用額度，以及其收費方案是否為業界最低。"
+    ],
+    answer: "API 的服務等級協議 (SLA) 是否保障了足夠的請求頻率、穩定性、低延遲與資料安全。"
+  },
+  {
+    subject: "gen-ai",
+    question: "77. 在使用文字到影像的生成模型時，提供「負面提示」(Negative Prompt) 的主要作用是什麼？",
+    options: [
+        "讓模型產生與正面提示完全相反的影像內容。",
+        "明確告知模型在生成的結果中，需要避免出現哪些特定的元素、風格或屬性。",
+        "透過加入限制來降低模型的運算複雜度，從而加快生成速度。",
+        "這是一種特殊的指令，用來生成黑白或負片效果的影像。"
+    ],
+    answer: "明確告知模型在生成的結果中，需要避免出現哪些特定的元素、風格或屬性。"
+  },
+  {
+    subject: "gen-ai",
+    question: "78. 「基礎模型」(Foundation Models) 的核心理念與特性是什麼？",
+    options: [
+        "指的是任何特定任務中，表現最基礎、最簡單的基準模型。",
+        "專為單一、特定任務設計，經過高度優化但缺乏泛用性的小型模型。",
+        "在海量、多樣化的資料上進行大規模預訓練，使其能適應多種下游任務的通用模型。",
+        "指的是開源的、可供任何人免費下載與修改的 AI 模型。"
+    ],
+    answer: "在海量、多樣化的資料上進行大規模預訓練，使其能適應多種下游任務的通用模型。"
+  },
+  {
+    subject: "gen-ai",
+    question: "79. 「負責任 AI」(Responsible AI) 是一個綜合性框架，旨在確保 AI 系統的開發與使用是安全、可信且合乎倫理的。此框架通常不包含下列哪個概念？",
+    options: [
+        "確保 AI 系統的決策過程可以被理解和解釋的「透明度」。",
+        "確保 AI 系統的開發和部署能夠極大化商業利益的「利潤最大化」。",
+        "確保 AI 系統的輸出不會對特定群體產生不公平對待的「公平性」。",
+        "確保當 AI 系統出現問題時，有明確的歸屬與究責機制的「問責制」。"
+    ],
+    answer: "確保 AI 系統的開發和部署能夠極大化商業利益的「利潤最大化」。"
+  },
+  {
+    subject: "gen-ai",
+    question: "80. 當一個企業需要其 AI 助理能夠回答關於最新產品資訊或即時新聞的問題時，僅依賴預訓練模型會力有未逮。哪種技術是解決此「知識更新」問題最有效的方法？",
+    options: [
+        "定期使用最新的資料對整個大型語言模型進行完整的重新微調。",
+        "利用檢索增強生成 (RAG)，讓模型在生成答案前，先從外部知識庫中檢索最新資訊。",
+        "透過精巧的提示工程，誘導模型自行推斷出最新的資訊。",
+        "將模型的參數進行量化，以加快其處理速度，從而間接提升反應時效性。"
+    ],
+    answer: "利用檢索增強生成 (RAG)，讓模型在生成答案前，先從外部知識庫中檢索最新資訊。"
+  },
+  {
+    subject: "gen-ai",
+    question: "81. AI Agent (AI 代理人) 的設計理念，是將大型語言模型 (LLM) 作為其「大腦」，並結合下列哪些能力來自主完成複雜的多步驟任務？",
+    options: [
+        "更大的上下文窗口與更多的模型參數。",
+        "更快的圖形處理器 (GPU) 與更低的網路延遲。",
+        "存取外部工具 (如 API、資料庫) 與進行自主規劃及反思的能力。",
+        "支援更多的自然語言種類與專業術語。"
+    ],
+    answer: "存取外部工具 (如 API、資料庫) 與進行自主規劃及反思的能力。"
+  },
+  {
+    subject: "gen-ai",
+    question: "82. LangChain 和 LlamaIndex 這類開源框架，在開發大型語言模型應用中扮演的主要角色是什麼？",
+    options: [
+        "提供用於從頭開始訓練大型基礎模型的底層演算法。",
+        "作為一個編排層，簡化串接語言模型、外部資料源和工具的複雜流程。",
+        "用於評估不同大型語言模型性能的標準化基準測試工具。",
+        "加速模型在特定硬體上運行的推論引擎。"
+    ],
+    answer: "作為一個編排層，簡化串接語言模型、外部資料源和工具的複雜流程。"
+  },
+  {
+    subject: "gen-ai",
+    question: "83. 在自然語言處理的文本摘要任務中，「抽取式摘要」(Extractive Summarization) 與「生成式摘要」(Abstractive Summarization) 的主要區別在於？",
+    options: [
+        "抽取式摘要直接從原文中挑選並組合關鍵句子；而生成式摘要則是用模型自己的話重新詮釋原文。",
+        "抽取式摘要只能處理短文本；而生成式摘要能處理長篇文件。",
+        "抽取式摘要速度較慢但較準確；而生成式摘要速度快但較不精確。",
+        "抽取式摘要需要大量標註資料；而生成式摘要是無監督的。"
+    ],
+    answer: "抽取式摘要直接從原文中挑選並組合關鍵句子；而生成式摘要則是用模型自己的話重新詮釋原文。"
+  },
+  {
+    subject: "gen-ai",
+    question: "84. 關於生成式 AI 對就業市場的影響，一種普遍的觀點是它會導致「任務取代」(Task Displacement) 而非全面的「工作取代」(Job Displacement)，這句話的意涵是什麼？",
+    options: [
+        "AI 將完全取代所有重複性高和創造性低的工作崗位。",
+        "工作的性質將發生轉變，AI 會自動化處理工作中的某些重複性任務，而人類專家則專注於更高價值的任務。",
+        "AI 將創造出全新的工作類型，其數量將遠超過被取代的工作。",
+        "只有特定的低技術門檻產業會受到衝擊，對高技術專業工作的影響不大。"
+    ],
+    answer: "工作的性質將發生轉變，AI 會自動化處理工作中的某些重複性任務，而人類專家則專注於更高價值的任務。"
+  },
+  {
+    subject: "gen-ai",
+    question: "85. 為了將龐大的語言模型部署到資源受限的環境（如手機或邊緣設備），或為了降低雲端部署的成本與延遲，最常用的模型優化技術是什麼？",
+    options: [
+        "增加訓練資料的多樣性與數量，以提升模型的泛化能力。",
+        "擴大模型的網路深度與寬度，以增強其學習容量。",
+        "使用模型量化 (Quantization) 和剪枝 (Pruning) 等技術來壓縮模型大小。",
+        "採用更複雜的自注意力機制變體，以捕捉更細微的語義關聯。"
+    ],
+    answer: "使用模型量化 (Quantization) 和剪枝 (Pruning) 等技術來壓縮模型大小。"
+  },
+  {
+    subject: "gen-ai",
+    question: "86. GPT 的全名是 Generative Pre-trained Transformer，其中的「Pre-trained」(預訓練) 概念指的是什麼？",
+    options: [
+        "模型在發布給大眾使用前，已經過開發者進行了完整的內部測試。",
+        "在針對特定任務進行微調之前，模型已在龐大的通用文本資料上進行了無監督學習。",
+        "模型的所有參數都是事先設定好的，在推論過程中不會改變。",
+        "模型在訓練前，已經被預先載入了特定領域的知識庫。"
+    ],
+    answer: "在針對特定任務進行微調之前，模型已在龐大的通用文本資料上進行了無監督學習。"
+  },
+  {
+    subject: "gen-ai",
+    question: "87. 企業在提供生成式 AI 服務時，為確保模型的輸出內容不會違反公司政策、產生仇恨言論或洩漏敏感資訊，應建立何種關鍵機制？",
+    options: [
+        "基於使用者回饋的動態定價模型。",
+        "詳細記錄所有使用者互動的日誌系統。",
+        "在模型的輸入和輸出端建立內容過濾與安全護欄 (Guardrails)。",
+        "針對不同使用者群體進行 A/B 測試的系統。"
+    ],
+    answer: "在模型的輸入和輸出端建立內容過濾與安全護欄 (Guardrails)。"
+  },
+  {
+    subject: "gen-ai",
+    question: "88. 假設你需要讓一個大型語言模型總結一份公司內部的機密報告，而這份報告從未出現在模型的訓練資料中。考量到安全與效能，最佳的技術方案是？",
+    options: [
+        "將報告的全文直接複製貼上到公開的 AI 聊天服務中，並要求其總結。",
+        "使用包含該報告的資料，從頭開始重新訓練一個專屬的語言模型。",
+        "在一個安全的私有環境中，利用 RAG 技術，讓模型即時檢索該報告內容後再生成總結。",
+        "將報告分割成數個小段落，逐一提交給模型進行總結，最後再人工合併。"
+    ],
+    answer: "在一個安全的私有環境中，利用 RAG 技術，讓模型即時檢索該報告內容後再生成總結。"
+  },
+  {
+    subject: "gen-ai",
+    question: "89. 在評估一個生成式 AI 導入專案的潛在投資回報率 (ROI) 時，以下哪一項是**最不相關**的考量因素？",
+    options: [
+        "透過自動化內容生成和客戶服務，預期能節省的人力成本。",
+        "藉由 AI 輔助研發與市場分析，可能帶來的新產品或商業模式創新。",
+        "導入 AI 解決方案後，主要競爭對手在市場上的品牌聲量變化。",
+        "提升員工處理核心業務的效率，所帶來的生產力增值。"
+    ],
+    answer: "導入 AI 解決方案後，主要競爭對手在市場上的品牌聲量變化。"
+  },
+  {
+    subject: "gen-ai",
+    question: "90. 從 AI 應用規劃與管理的角度來看，選擇在自家設施部署開源 (Open-source) LLM，相較於直接使用商業 API 服務，其最主要的策略性優勢是什麼？",
+    options: [
+        "開源模型通常能比商業 API 服務更快地獲得最新功能的更新。",
+        "可以完全避免模型產生幻覺或偏見的風險。",
+        "能夠對模型架構、資料處理和安全控制擁有更高的自主權與客製化彈性。",
+        "整體擁有成本 (TCO) 絕對低於使用 API 服務，因為模型本身是免費的。"
+    ],
+    answer: "能夠對模型架構、資料處理和安全控制擁有更高的自主權與客製化彈性。"
+  },
+  {
+    subject: "gen-ai",
+    question: "91. 在生成式 AI 的安全領域中，「提示注入」(Prompt Injection) 攻擊指的是什麼？",
+    options: [
+        "一種優化提示的技術，能將簡短的提示自動擴充為更詳細的指令。",
+        "駭客透過輸入精心設計的惡意提示，繞過模型的安全護欄，使其執行非預期或有害的操作。",
+        "指模型因為提示過於模糊，而產生與使用者意圖無關的隨機輸出。",
+        "一種提升模型性能的訓練方法，將大量優質的提示範例注入到訓練資料中。"
+    ],
+    answer: "駭客透過輸入精心設計的惡意提示，繞過模型的安全護欄，使其執行非預期或有害的操作。"
+  },
+  {
+    subject: "gen-ai",
+    question: "92. RLHF (Reinforcement Learning from Human Feedback) 技術在現代大型語言模型的開發中扮演了什麼關鍵角色？",
+    options: [
+        "作為模型初始預訓練的主要方法，讓模型學會語言的基本規則。",
+        "透過收集人類對模型不同輸出的偏好排序，來微調模型，使其行為與人類的價值觀和期望對齊。",
+        "一種模型壓縮技術，利用強化學習來移除模型中不重要的神經元。",
+        "提升模型處理多種語言能力的跨語言學習方法。"
+    ],
+    answer: "透過收集人類對模型不同輸出的偏好排序，來微調模型，使其行為與人類的價值觀和期望對齊。"
+  },
+  {
+    subject: "gen-ai",
+    question: "93. 在一個團隊中導入生成式 AI 以提升協作效率時，以下哪一項是最佳實踐 (Best Practice)？",
+    options: [
+        "鼓勵每位成員獨立探索，並對自己的有效提示嚴格保密以維持個人競爭力。",
+        "完全信任並直接採用 AI 生成的初步成果，以最大化節省時間。",
+        "建立一個共享的提示知識庫 (Prompt Library)，並鼓勵成員分享成功的案例與技巧。",
+        "規定所有成員必須使用完全相同的 AI 模型和完全相同的提示，以確保結果一致。"
+    ],
+    answer: "建立一個共享的提示知識庫 (Prompt Library)，並鼓勵成員分享成功的案例與技巧。"
+  },
+  {
+    subject: "gen-ai",
+    question: "94. 關於由 AI 完全自主生成的內容（例如一張圖片或一首詩）其版權歸屬問題，目前在許多國家（如美國）的司法實踐中，主流的見解是什麼？",
+    options: [
+        "版權應歸屬於開發該 AI 模型的公司或組織。",
+        "版權應歸屬於提供提示 (Prompt) 的使用者。",
+        "由於缺乏「人類原創性」的要素，由 AI 獨立生成的作品通常無法獲得版權保護。",
+        "所有由 AI 生成的內容都自動進入公共領域，任何人都可以自由使用。"
+    ],
+    answer: "由於缺乏「人類原創性」的要素，由 AI 獨立生成的作品通常無法獲得版權保護。"
+  },
+  {
+    subject: "gen-ai",
+    question: "95. 對於需要高度事實準確性的專業領域應用（如提供初步的醫療或法律資訊），直接依賴通用的、未經調校的大型語言模型，其最大的潛在風險是什麼？",
+    options: [
+        "模型的回應可能因為過於謹慎而缺乏具體建議。",
+        "模型可能會產生「幻覺」，自信地提供流暢但完全錯誤或危險的資訊。",
+        "模型的回應速度可能無法滿足專業人士的即時需求。",
+        "模型的語言風格可能過於口語化，不符合專業場合的要求。"
+    ],
+    answer: "模型可能會產生「幻覺」，自信地提供流暢但完全錯誤或危險的資訊。"
+  },
+  {
+    subject: "gen-ai",
+    question: "96. 一家企業希望建置一個內部 AI 知識庫，讓員工能用自然語言查詢複雜的公司規章。在設計此系統時，以下哪種技術架構最為合適、安全且具成本效益？",
+    options: [
+        "將所有規章制度作為長篇上下文，直接輸入到一個具有極大上下文窗口的模型中。",
+        "建立一個檢索增強生成 (RAG) 系統，將規章文件向量化存儲，讓模型先檢索再回答。",
+        "收集大量問答對，用公司的全部規章制度對一個基礎模型進行完整的微調。",
+        "訓練員工使用更精準的關鍵字，在傳統的搜尋引擎中查找規章。"
+    ],
+    answer: "建立一個檢索增強生成 (RAG) 系統，將規章文件向量化存儲，讓模型先檢索再回答。"
+  },
+  {
+    subject: "gen-ai",
+    question: "97. 下列哪一個是目前學術界與業界公認的、用於綜合評估大型語言模型在多領域知識與推理能力的權威性基準測試 (Benchmark)？",
+    options: [
+        "ImageNet，用於評估圖像分類模型性能的大規模視覺資料庫。",
+        "MMLU (Massive Multitask Language Understanding)，涵蓋從初級數學到專業法律等多個主題的綜合性考試。",
+        "GLUE (General Language Understanding Evaluation)，用於評估早期自然語言理解模型性能的基準。",
+        "SQuAD (Stanford Question Answering Dataset)，專注於評估模型閱讀理解與問答能力的資料集。"
+    ],
+    answer: "MMLU (Massive Multitask Language Understanding)，涵蓋從初級數學到專業法律等多個主題的綜合性考試。"
+  },
+  {
+    subject: "gen-ai",
+    question: "98. 當你在提示中對 AI 說：「假設你是一位經驗豐富的行銷總監，請為這款新產品草擬一份行銷策略」，這種技巧在提示工程中稱為什麼？",
+    options: [
+        "思維鏈提示 (Chain-of-Thought Prompting)",
+        "零樣本提示 (Zero-shot Prompting)",
+        "角色扮演提示 (Role-playing Prompting)",
+        "少樣本提示 (Few-shot Prompting)"
+    ],
+    answer: "角色扮演提示 (Role-playing Prompting)"
+  },
+  {
+    subject: "gen-ai",
+    question: "99. 跨國企業在規劃生成式 AI 服務時，為何「資料落地」(Data Residency) 或「資料主權」(Data Sovereignty) 是一個必須審慎評估的關鍵議題？",
+    options: [
+        "為了讓資料儲存在離使用者最近的資料中心，以獲得最低的網路延遲。",
+        "因為不同國家或地區對於個人及企業資料的儲存、處理和跨境傳輸有著嚴格且相異的法律規範。",
+        "為了將資料分散在不同地理位置，以作為一種備份和災難恢復策略。",
+        "這是一個商業談判的考量，不同地區的雲端服務價格可能有所不同。"
+    ],
+    answer: "因為不同國家或地區對於個人及企業資料的儲存、處理和跨境傳輸有著嚴格且相異的法律規範。"
+  },
+  {
+    subject: "gen-ai",
+    question: "100. 生成式 AI 對於軟體開發生命週期 (SDLC) 帶來了革命性的影響。其中，最有潛力且已廣泛應用的方向是？",
+    options: [
+        "完全取代人類軟體架構師，進行系統的頂層設計。",
+        "作為開發者的智慧夥伴，輔助編寫、修正、解釋程式碼以及生成單元測試。",
+        "自動化管理複雜專案的預算分配與人力調度。",
+        "取代傳統的需求訪談，直接從模糊的商業概念生成完整的應用程式。"
+    ],
+    answer: "作為開發者的智慧夥伴，輔助編寫、修正、解釋程式碼以及生成單元測試。"
+  }
+  // ---- END OF REPLACED QUESTIONS ----
+];
+
+
+function displayQuestions() {
+  const aiContainer = document.getElementById('ai-fundamentals');
+  const genAiContainer = document.getElementById('gen-ai');
+  
+  questions.forEach((q, index) => {
+    const questionBlock = document.createElement('div');
+    questionBlock.classList.add('question-block');
+    questionBlock.id = `q-block-${index}`;
+    
+    const questionText = document.createElement('p');
+    questionText.classList.add('question-text');
+    questionText.innerText = q.question;
+    questionBlock.appendChild(questionText);
+    
+    const optionsDiv = document.createElement('div');
+    optionsDiv.classList.add('options');
+    
+    q.options.forEach(option => {
+      const label = document.createElement('label');
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = `question${index}`;
+      radio.value = option;
+      
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(option));
+      optionsDiv.appendChild(label);
+    });
+    
+    questionBlock.appendChild(optionsDiv);
+    
+    if (q.subject === 'ai-fundamentals') {
+      aiContainer.appendChild(questionBlock);
+    } else {
+      genAiContainer.appendChild(questionBlock);
+    }
+  });
+}
+
+function submitQuiz() {
+  // --- 1. Calculate scores ---
+  let aiScore = 0;
+  let genAiScore = 0;
+  const form = document.getElementById('quizForm');
+  
+  questions.forEach((q, index) => {
+    const selectedOption = form.querySelector(`input[name="question${index}"]:checked`);
+    if (selectedOption && selectedOption.value === q.answer) {
+      if (q.subject === 'ai-fundamentals') {
+        aiScore += 2;
+      } else {
+        genAiScore += 2;
+      }
+    }
+  });
+
+  // --- 2. Display results summary ---
+  const resultsDiv = document.getElementById('results');
+  const totalScore = aiScore + genAiScore;
+  const averageScore = totalScore / 2;
+  const aiPassed = aiScore >= 60;
+  const genAiPassed = genAiScore >= 60;
+  const averagePassed = averageScore >= 70;
+  const passed = aiPassed && genAiPassed && averagePassed;
+
+  resultsDiv.innerHTML = ''; // Clear previous results
+
+  let resultHTML = `<h2>測驗結果</h2>`;
+  
+  if (passed) {
+    resultHTML += `<h3>恭喜！您已通過本次測驗。</h3>`;
+    resultsDiv.className = 'pass';
+  } else {
+    resultHTML += `<h3>很遺憾，您未通過本次測驗。</h3>`;
+    resultsDiv.className = 'fail';
+  }
+
+  resultHTML += `<div class="result-details">`;
+  resultHTML += `<p>人工智慧基礎概論: <strong>${aiScore} / 100 分</strong> ${aiPassed ? ' (達標)' : ' <span style="color:red;">(未達標，需高於60分)</span>'}</p>`;
+  resultHTML += `<p>生成式AI應用與規劃: <strong>${genAiScore} / 100 分</strong> ${genAiPassed ? ' (達標)' : ' <span style="color:red;">(未達標，需高於60分)</span>'}</p>`;
+  resultHTML += `<p><strong>平均分數: ${averageScore.toFixed(1)} / 100 分</strong> ${averagePassed ? ' (達標)' : ' <span style="color:red;">(未達標，需高於70分)</span>'}</p>`;
+  resultHTML += `</div>`;
+  
+  resultsDiv.innerHTML = resultHTML;
+
+  // --- 3. Show correct answers and highlight choices ---
+  questions.forEach((q, index) => {
+    const block = document.getElementById(`q-block-${index}`);
+    const userChoice = form.querySelector(`input[name="question${index}"]:checked`);
+    const allOptions = block.querySelectorAll('.options label');
+
+    // Remove existing answer text if any
+    const existingAnswer = block.querySelector('.correct-answer-text');
+    if (existingAnswer) {
+        existingAnswer.remove();
+    }
+    
+    allOptions.forEach(label => {
+      const radio = label.querySelector('input');
+      radio.disabled = true; // Disable all radio buttons
+
+      // Highlight the correct answer
+      if (radio.value === q.answer) {
+        label.classList.add('correct-answer-label');
+      } 
+      // Highlight the user's incorrect choice
+      else if (userChoice && userChoice.value === radio.value) {
+        label.classList.add('incorrect-answer-label');
+      }
+    });
+
+    // Add a div to explicitly show the correct answer
+    const answerDiv = document.createElement('div');
+    answerDiv.className = 'correct-answer-text';
+    answerDiv.innerHTML = `<strong>正確答案：</strong> ${q.answer}`;
+    block.appendChild(answerDiv);
+  });
+  
+  // --- 4. Disable submit button ---
+  const submitButton = form.querySelector('button');
+  submitButton.disabled = true;
+  submitButton.innerText = '請刷新頁面以重新測驗';
+
+  // --- 5. Scroll to results ---
+  resultsDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Initial display of questions when the page loads
+displayQuestions();
+</script>
+
+</body>
+</html>
